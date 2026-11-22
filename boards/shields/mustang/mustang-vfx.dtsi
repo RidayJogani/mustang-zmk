@@ -9,19 +9,19 @@
         default-scene = <&mustang_cross>;
     };
 
-    astra_vfx {
-        astra_all_leds: all_leds {
+    mustang_vfx {
+        mustang_all_leds: all_leds {
             compatible = "zmk,vfx-zone";
             range = <0 42>;
         };
 
-        astra_cross: cross {
+        mustang_cross: cross {
             compatible = "zmk,vfx-scene";
             display-name = "Cross";
 
             cross {
                 compatible = "zmk,vfx-layer-cross";
-                zone = <&astra_all_leds>;
+                zone = <&mustang_all_leds>;
                 color = <VFX_HSB(180, 100, 100)>;
                 axes = <VFX_CROSS_BOTH>;
                 radius = <0>;
