@@ -19,6 +19,6 @@
 #
 include:
   - board: nice_nano@2.0.0/nrf52840/zmk
-    shield: astra_left
+    shield: mustang_left
   - board: nice_nano@2.0.0/nrf52840/zmk
-    shield: astra_right
+    shield: mustang_right

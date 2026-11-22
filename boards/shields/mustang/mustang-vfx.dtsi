@@ -6,7 +6,7 @@
         status = "okay";
         virtual-length = <42>;
         strip-offset = <0>;
-        default-scene = <&astra_cross>;
+        default-scene = <&mustang_cross>;
     };
 
     astra_vfx {
@@ -32,4 +32,4 @@
     };
 };
 
-#include "astra-led-map.dtsi"
+#include "mustang-led-map.dtsi"
