@@ -1,7 +1,7 @@
-if SHIELD_ASTRA_LEFT
+if SHIELD_MUSTANG_LEFT
 
 config ZMK_KEYBOARD_NAME
-    default "astra"
+    default "mustang"
 
 config ZMK_SPLIT_ROLE_CENTRAL
     default y
@@ -14,7 +14,7 @@ config ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_PROXY
 
 endif
 
-if SHIELD_ASTRA_LEFT || SHIELD_ASTRA_RIGHT
+if SHIELD_MUSTANG_LEFT || SHIELD_MUSTANG_RIGHT
 
 config ZMK_SPLIT
     default y
