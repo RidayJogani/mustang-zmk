@@ -6,7 +6,7 @@
         status = "okay";
         virtual-length = <42>;
         strip-offset = <0>;
-        default-scene = <&mustang_cross>;
+        default-scene = <&mustang_blue_neighbors>;
     };
 
     mustang_vfx {
@@ -15,17 +15,51 @@
             range = <0 42>;
         };
 
-        mustang_cross: cross {
+        mustang_blue_neighbors: blue_neighbors {
             compatible = "zmk,vfx-scene";
-            display-name = "Cross";
+            display-name = "Blue Neighbors";
 
-            cross {
-                compatible = "zmk,vfx-layer-cross";
+            /*
+             * Keyflash uses linear distance falloff (255 - d * 255 / spread).
+             * On Mustang's 10-unit grid, orthogonal neighbors sit at d=10 and
+             * diagonal neighbors at d=14, while non-adjacent keys sit at d>=20.
+             * With spread=19, d=14 gets level 68; stacking four additive
+             * layers saturates the pressed key and all 8 adjacent keys to
+             * full blue while keeping keys at d>=20 off.
+             */
+            flash_1 {
+                compatible = "zmk,vfx-layer-keyflash";
                 zone = <&mustang_all_leds>;
-                color = <VFX_HSB(180, 100, 100)>;
-                axes = <VFX_CROSS_BOTH>;
-                radius = <0>;
-                thickness = <4>;
+                blend = <VFX_BLEND_ADD>;
+                color = <VFX_HSB(240, 100, 100)>;
+                spread = <19>;
+                decay-ms = <500>;
+            };
+
+            flash_2 {
+                compatible = "zmk,vfx-layer-keyflash";
+                zone = <&mustang_all_leds>;
+                blend = <VFX_BLEND_ADD>;
+                color = <VFX_HSB(240, 100, 100)>;
+                spread = <19>;
+                decay-ms = <500>;
+            };
+
+            flash_3 {
+                compatible = "zmk,vfx-layer-keyflash";
+                zone = <&mustang_all_leds>;
+                blend = <VFX_BLEND_ADD>;
+                color = <VFX_HSB(240, 100, 100)>;
+                spread = <19>;
+                decay-ms = <500>;
+            };
+
+            flash_4 {
+                compatible = "zmk,vfx-layer-keyflash";
+                zone = <&mustang_all_leds>;
+                blend = <VFX_BLEND_ADD>;
+                color = <VFX_HSB(240, 100, 100)>;
+                spread = <19>;
                 decay-ms = <500>;
             };
         };

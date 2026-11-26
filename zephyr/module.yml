@@ -1,3 +1,5 @@
+name: mustang-zmk
 build:
+  cmake: .
   settings:
     board_root: .
