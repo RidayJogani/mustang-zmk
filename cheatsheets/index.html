@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mustang ZMK — Interactive Layout Explorer</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-alt: #f1f5f9;
+      --border: #cbd5e1;
+      --border-subtle: #e2e8f0;
+      --text: #0f172a;
+      --muted: #475569;
+      --primary: #2563eb;
+      --primary-bg: rgba(37, 99, 235, 0.12);
+      --primary-text: #ffffff;
+      --trigger: #d97706;
+      --trigger-bg: rgba(217, 119, 6, 0.14);
+      --shift: #7c3aed;
+      --shift-bg: rgba(124, 58, 237, 0.13);
+      --mod-bg: #e2e8f0;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b1120;
+        --surface: #111827;
+        --surface-alt: #1e293b;
+        --border: #334155;
+        --border-subtle: #1f2937;
+        --text: #f1f5f9;
+        --muted: #94a3b8;
+        --primary: #3b82f6;
+        --primary-bg: rgba(59, 130, 246, 0.22);
+        --primary-text: #ffffff;
+        --trigger: #f59e0b;
+        --trigger-bg: rgba(245, 158, 11, 0.2);
+        --shift: #a78bfa;
+        --shift-bg: rgba(167, 139, 250, 0.2);
+        --mod-bg: #1e293b;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+      padding: 24px;
+    }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-title h1 { margin: 0; font-size: 20px; font-weight: 700; }
+    .nav-title p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .nav-link {
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+    }
+    .nav-link.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--primary-text);
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+    }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 14px;
+      margin-bottom: 14px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .tabs { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tab-btn {
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--muted);
+    }
+    .tab-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--primary-text);
+    }
+    .tab-btn.has-match:not(.active) {
+      border-color: var(--primary);
+      color: var(--text);
+    }
+    .search-wrap { display: flex; gap: 6px; align-items: center; }
+    .search-input {
+      width: 240px;
+      padding: 7px 10px;
+      font-size: 13px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+    }
+    .search-input:focus { outline: 2px solid var(--primary); border-color: transparent; }
+    .btn-clear {
+      cursor: pointer;
+      padding: 7px 10px;
+      font-size: 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text);
+    }
+    .banner {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 13px;
+      margin-bottom: 14px;
+      color: var(--muted);
+    }
+    .banner strong { color: var(--text); }
+    .split-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+    }
+    @media (max-width: 780px) {
+      .split-grid { grid-template-columns: 1fr; gap: 18px; }
+    }
+    .half { display: flex; flex-direction: column; gap: 8px; }
+    .krow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+    .spacer { height: 54px; }
+    .keycap {
+      cursor: pointer;
+      height: 54px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      padding: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-family: inherit;
+      transition: transform 0.1s ease, border-color 0.1s ease;
+    }
+    .keycap:hover { transform: translateY(-1px); border-color: var(--primary); }
+    .keycap .main { font-size: 13px; font-weight: 600; line-height: 1.15; }
+    .keycap .sub { font-size: 11px; color: var(--muted); margin-top: 2px; line-height: 1; }
+    .keycap.mod { background: var(--mod-bg); }
+    .keycap.trans {
+      border-style: dashed;
+      background: transparent;
+      color: var(--muted);
+      opacity: 0.55;
+    }
+    .keycap.trigger {
+      border-color: var(--trigger);
+      background: var(--trigger-bg);
+      box-shadow: 0 0 0 1px var(--trigger);
+    }
+    .keycap.match {
+      border-color: var(--primary);
+      background: var(--primary-bg);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+    .keycap.shift-match {
+      border-color: var(--shift);
+      background: var(--shift-bg);
+      box-shadow: 0 0 0 1px var(--shift);
+    }
+    .footer-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-subtle);
+      font-size: 13px;
+    }
+    .legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--muted); }
+    .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+    .swatch { width: 12px; height: 12px; border-radius: 3px; border: 1px solid; }
+    .swatch.t { border-color: var(--trigger); background: var(--trigger-bg); }
+    .swatch.m { border-color: var(--primary); background: var(--primary-bg); }
+    .swatch.s { border-color: var(--shift); background: var(--shift-bg); }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #fff; color: #000; padding: 0; }
+      .card { border: none; padding: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="nav no-print">
+      <div class="nav-title">
+        <h1>Mustang 42-Key Layout Explorer</h1>
+        <p>Interactive layer map &amp; key finder from <code>config/mustang.keymap</code></p>
+      </div>
+      <div class="nav-links">
+        <a class="nav-link active" href="index.html">Interactive Explorer</a>
+        <a class="nav-link" href="all-layers.html">All 6 Layers</a>
+        <a class="nav-link" href="quick-lookup.html">Symbol &amp; Task Finder</a>
+        <a class="nav-link" href="thumbs-and-drills.html">Thumbs &amp; Drills</a>
+      </div>
+    </nav>
+
+    <main class="card">
+      <div class="toolbar">
+        <div id="layer-tabs" class="tabs"></div>
+        <div class="search-wrap">
+          <input id="key-search" class="search-input" type="text" placeholder="Find key (e.g. ~, {, F5, PG_UP, BT)..." />
+          <button id="clear-search" class="btn-clear" type="button" style="display:none">Clear</button>
+        </div>
+      </div>
+
+      <div class="banner">
+        <div id="activation-text"></div>
+        <div id="search-status"></div>
+      </div>
+
+      <div id="keyboard-grid" class="split-grid"></div>
+
+      <div class="footer-bar">
+        <div id="key-inspector">Hover or click any key to inspect tap, hold, and shifted output.</div>
+        <div class="legend">
+          <span class="legend-item"><span class="swatch t"></span>Held trigger</span>
+          <span class="legend-item"><span class="swatch m"></span>Match</span>
+          <span class="legend-item"><span class="swatch s"></span>Hold Shift (RThumb 2)</span>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const LAYERS = [
+      {
+        id: 0, name: "0 Base", title: "Default Layer", activation: "Always active", triggers: [],
+        keys: {
+          "L0-1": { main: "Q", detail: "Q", search: ["q"] },
+          "L0-2": { main: "W", detail: "W", search: ["w"] },
+          "L0-3": { main: "E", detail: "E", search: ["e"] },
+          "L0-4": { main: "R", detail: "R", search: ["r"] },
+          "L0-5": { main: "T", detail: "T", search: ["t"] },
+          "L1-0": { main: "TAB", detail: "Tab", mod: true, search: ["tab"] },
+          "L1-1": { main: "A", detail: "A", search: ["a"] },
+          "L1-2": { main: "S", detail: "S", search: ["s"] },
+          "L1-3": { main: "D", detail: "D", search: ["d"] },
+          "L1-4": { main: "F", detail: "F", search: ["f"] },
+          "L1-5": { main: "G", detail: "G", search: ["g"] },
+          "L2-0": { main: "DEL", detail: "Delete", mod: true, search: ["del", "delete"] },
+          "L2-1": { main: "Z", detail: "Z", search: ["z"] },
+          "L2-2": { main: "X", detail: "X", search: ["x"] },
+          "L2-3": { main: "C", detail: "C", search: ["c"] },
+          "L2-4": { main: "V", detail: "V", search: ["v"] },
+          "L2-5": { main: "B", detail: "B", search: ["b"] },
+          "L3-2": { main: "L1", sub: "Mouse", detail: "Hold: Layer 1 (Mouse & F-Keys)", holdLayer: 1, mod: true, search: ["mouse", "layer 1", "mo 1"] },
+          "L3-3": { main: "RET", sub: "Hold L2", detail: "Tap: Enter (RET) | Hold: Layer 2 (Special)", holdLayer: 2, mod: true, search: ["enter", "return", "ret", "special", "layer 2"] },
+          "L3-4": { main: "ESC", sub: "LCtrl", detail: "Tap: Escape | Hold: Left Ctrl", mod: true, search: ["esc", "escape", "ctrl", "control", "lctrl"] },
+          "L3-5": { main: "LALT", detail: "Left Alt", mod: true, search: ["alt", "lalt"] },
+          "R0-0": { main: "Y", detail: "Y", search: ["y"] },
+          "R0-1": { main: "U", detail: "U", search: ["u"] },
+          "R0-2": { main: "I", detail: "I", search: ["i"] },
+          "R0-3": { main: "O", detail: "O", search: ["o"] },
+          "R0-4": { main: "P", detail: "P", search: ["p"] },
+          "R1-0": { main: "H", detail: "H", search: ["h"] },
+          "R1-1": { main: "J", detail: "J", search: ["j"] },
+          "R1-2": { main: "K", detail: "K", search: ["k"] },
+          "R1-3": { main: "L", detail: "L", search: ["l"] },
+          "R1-4": { main: ";", sub: "Shift :", detail: "Tap: ; | Shift: :", search: [";", ":", "semi", "colon"], shiftChar: ":" },
+          "R1-5": { main: "'", sub: 'Shift "', detail: "Tap: ' | Shift: \"", search: ["'", '"', "quote", "sqt", "dqt"], shiftChar: '"' },
+          "R2-0": { main: "N", detail: "N", search: ["n"] },
+          "R2-1": { main: "M", detail: "M", search: ["m"] },
+          "R2-2": { main: ",", sub: "Shift <", detail: "Tap: , | Shift: <", search: [",", "<", "comma", "lt"], shiftChar: "<" },
+          "R2-3": { main: ".", sub: "Shift >", detail: "Tap: . | Shift: >", search: [".", ">", "dot", "period", "gt"], shiftChar: ">" },
+          "R2-4": { main: "/", sub: "Shift ?", detail: "Tap: / | Shift: ?", search: ["/", "?", "slash", "question"], shiftChar: "?" },
+          "R2-5": { main: "\\", sub: "Shift |", detail: "Tap: \\ | Shift: |", search: ["\\", "|", "backslash", "bslh", "pipe"], shiftChar: "|" },
+          "R3-0": { main: "RET", sub: "LGui", detail: "Tap: Enter (RET) | Hold: Left GUI (Win/Cmd)", mod: true, search: ["enter", "ret", "gui", "win", "cmd", "super"] },
+          "R3-1": { main: "SPC", sub: "LShift", detail: "Tap: Space | Hold: Left Shift", mod: true, search: ["space", "shift", "lshft"] },
+          "R3-2": { main: "SPC", sub: "Hold L3", detail: "Tap: Space | Hold: Layer 3 (Arrows)", holdLayer: 3, mod: true, search: ["space", "arrows", "layer 3"] },
+          "R3-3": { main: "BSPC", detail: "Backspace", mod: true, search: ["bspc", "backspace"] }
+        }
+      },
+      {
+        id: 1, name: "1 Mouse", title: "Mouse & F-Keys", activation: "Hold Left Thumb 1 (LT1)", triggers: ["L3-2"],
+        keys: {
+          "L0-1": { main: "F2", detail: "F2", search: ["f2"] },
+          "L0-2": { main: "F3", detail: "F3", search: ["f3"] },
+          "L0-3": { main: "F4", detail: "F4", search: ["f4"] },
+          "L0-4": { main: "F5", detail: "F5", search: ["f5"] },
+          "L0-5": { main: "F6", detail: "F6", search: ["f6"] },
+          "L1-0": { main: "F1", detail: "F1", search: ["f1"] },
+          "L1-1": { main: "MB4", sub: "Back", detail: "Mouse Button 4 (Back)", search: ["mb4", "back", "mouse"] },
+          "L1-2": { main: "·", detail: "Transparent (Base: S)", trans: true, search: [] },
+          "L1-3": { main: "MCLK", detail: "Middle Mouse Click", search: ["mclk", "middle", "click", "mouse"] },
+          "L1-4": { main: "LCLK", detail: "Left Mouse Click", search: ["lclk", "left", "click", "mouse"] },
+          "L1-5": { main: "RCLK", detail: "Right Mouse Click", search: ["rclk", "right", "click", "mouse"] },
+          "L3-2": { main: "HELD", sub: "L1", detail: "Holding LT1 activates Mouse (L1)", mod: true, search: [] },
+          "L3-3": { main: "L5", sub: "BT", detail: "Hold with LT1 to open Layer 5 (Bluetooth)", holdLayer: 5, mod: true, search: ["bt", "bluetooth", "layer 5"] },
+          "R0-0": { main: "F7", detail: "F7", search: ["f7"] },
+          "R0-1": { main: "F8", detail: "F8", search: ["f8"] },
+          "R0-2": { main: "F9", detail: "F9", search: ["f9"] },
+          "R0-3": { main: "F10", detail: "F10", search: ["f10"] },
+          "R0-4": { main: "F11", detail: "F11", search: ["f11"] },
+          "R1-0": { main: "M ←", detail: "Move Mouse Cursor Left", search: ["mouse", "move", "left"] },
+          "R1-1": { main: "M ↓", detail: "Move Mouse Cursor Down", search: ["mouse", "move", "down"] },
+          "R1-2": { main: "M ↑", detail: "Move Mouse Cursor Up", search: ["mouse", "move", "up"] },
+          "R1-3": { main: "M →", detail: "Move Mouse Cursor Right", search: ["mouse", "move", "right"] },
+          "R1-4": { main: "MB5", sub: "Fwd", detail: "Mouse Button 5 (Forward)", search: ["mb5", "forward", "mouse"] },
+          "R1-5": { main: "F12", detail: "F12", search: ["f12"] },
+          "R3-2": { main: "L4", sub: "Scroll", detail: "Hold with LT1 to open Layer 4 (Scroll)", holdLayer: 4, mod: true, search: ["scroll", "layer 4"] }
+        }
+      },
+      {
+        id: 2, name: "2 Special", title: "Numbers, Symbols & Navigation", activation: "Hold Left Thumb 2 (LT2)", triggers: ["L3-3"],
+        keys: {
+          "L0-1": { main: "1", detail: "Number 1", search: ["1"] },
+          "L0-2": { main: "2", detail: "Number 2", search: ["2"] },
+          "L0-3": { main: "3", detail: "Number 3", search: ["3"] },
+          "L0-4": { main: "4", detail: "Number 4", search: ["4"] },
+          "L0-5": { main: "5", detail: "Number 5", search: ["5"] },
+          "L1-0": { main: "HOME", detail: "Home", mod: true, search: ["home"] },
+          "L1-1": { main: "&", detail: "Ampersand (&)", search: ["&", "amp", "ampersand"] },
+          "L1-2": { main: "*", detail: "Asterisk (*)", search: ["*", "astrk", "asterisk", "star"] },
+          "L1-3": { main: "#", detail: "Hash / Pound (#)", search: ["#", "hash", "pound"] },
+          "L1-4": { main: "$", detail: "Dollar ($)", search: ["$", "dollar", "dllr"] },
+          "L1-5": { main: "(", detail: "Left Parenthesis (()", search: ["(", "lpar", "paren"] },
+          "L2-0": { main: "PG_UP", detail: "Page Up", mod: true, search: ["pgup", "pg_up", "page up", "pageup"] },
+          "L2-1": { main: "!", detail: "Exclamation (!)", search: ["!", "excl", "bang"] },
+          "L2-2": { main: "@", detail: "At (@)", search: ["@", "at"] },
+          "L2-3": { main: "^", detail: "Caret (^)", search: ["^", "caret"] },
+          "L2-4": { main: "~", detail: "Tilde (~)", search: ["~", "tilde"] },
+          "L2-5": { main: "[", sub: "Shift {", detail: "Tap: [ | +Shift (RT2): {", search: ["[", "{", "lbkt", "lbrc", "bracket", "brace"], shiftChar: "{" },
+          "L3-2": { main: "L5", sub: "BT", detail: "Hold with LT2 to open Layer 5 (Bluetooth)", holdLayer: 5, mod: true, search: ["bt", "bluetooth", "layer 5"] },
+          "L3-3": { main: "HELD", sub: "L2", detail: "Holding LT2 activates Special (L2)", mod: true, search: [] },
+          "R0-0": { main: "6", detail: "Number 6", search: ["6"] },
+          "R0-1": { main: "7", detail: "Number 7", search: ["7"] },
+          "R0-2": { main: "8", detail: "Number 8", search: ["8"] },
+          "R0-3": { main: "9", detail: "Number 9", search: ["9"] },
+          "R0-4": { main: "0", detail: "Number 0", search: ["0"] },
+          "R1-0": { main: ")", detail: "Right Parenthesis ())", search: [")", "rpar", "paren"] },
+          "R1-1": { main: "-", detail: "Minus (-)", search: ["-", "minus", "hyphen"] },
+          "R1-2": { main: "+", detail: "Plus (+)", search: ["+", "plus"] },
+          "R1-3": { main: "PSCRN", detail: "Print Screen", mod: true, search: ["pscrn", "print", "screenshot"] },
+          "R1-4": { main: "%", detail: "Percent (%)", search: ["%", "prcnt", "percent"] },
+          "R1-5": { main: "END", detail: "End", mod: true, search: ["end"] },
+          "R2-0": { main: "]", sub: "Shift }", detail: "Tap: ] | +Shift (RT2): }", search: ["]", "}", "rbkt", "rbrc", "bracket", "brace"], shiftChar: "}" },
+          "R2-1": { main: "_", detail: "Underscore (_)", search: ["_", "under", "underscore"] },
+          "R2-2": { main: "=", detail: "Equals (=)", search: ["=", "equal", "equals"] },
+          "R2-3": { main: "·", detail: "Transparent (Base: .)", trans: true, search: [] },
+          "R2-4": { main: "`", detail: "Grave / Backtick (`)", search: ["`", "grave", "backtick"] },
+          "R2-5": { main: "PG_DN", detail: "Page Down", mod: true, search: ["pgdn", "pg_dn", "page down", "pagedown"] },
+          "R3-2": { main: "L5", sub: "BT", detail: "Hold with LT2 to open Layer 5 (Bluetooth)", holdLayer: 5, mod: true, search: ["bt", "bluetooth", "layer 5"] }
+        }
+      },
+      {
+        id: 3, name: "3 Arrows", title: "Vim-Style Home Row Arrows", activation: "Hold Right Thumb 3 (RT3)", triggers: ["R3-2"],
+        keys: {
+          "L3-3": { main: "L5", sub: "BT", detail: "Hold with RT3 to open Layer 5 (Bluetooth)", holdLayer: 5, mod: true, search: ["bt", "bluetooth", "layer 5"] },
+          "R1-0": { main: "←", detail: "Left Arrow (H)", search: ["left", "arrow", "←"] },
+          "R1-1": { main: "↓", detail: "Down Arrow (J)", search: ["down", "arrow", "↓"] },
+          "R1-2": { main: "↑", detail: "Up Arrow (K)", search: ["up", "arrow", "↑"] },
+          "R1-3": { main: "→", detail: "Right Arrow (L)", search: ["right", "arrow", "→"] },
+          "R3-2": { main: "HELD", sub: "L3", detail: "Holding RT3 activates Arrows (L3)", mod: true, search: [] }
+        }
+      },
+      {
+        id: 4, name: "4 Scroll", title: "Mouse Scroll & Clicks", activation: "Hold LT1 (Mouse) + RT3", triggers: ["L3-2", "R3-2"],
+        keys: {
+          "L0-1": { main: "F2", detail: "F2", search: [] },
+          "L0-2": { main: "F3", detail: "F3", search: [] },
+          "L0-3": { main: "F4", detail: "F4", search: [] },
+          "L0-4": { main: "F5", detail: "F5", search: [] },
+          "L0-5": { main: "F6", detail: "F6", search: [] },
+          "L1-0": { main: "F1", detail: "F1", search: [] },
+          "L1-1": { main: "MB4", sub: "Back", detail: "Mouse Button 4 (Back)", search: [] },
+          "L1-3": { main: "MCLK", detail: "Middle Click", search: [] },
+          "L1-4": { main: "LCLK", detail: "Left Click", search: [] },
+          "L1-5": { main: "RCLK", detail: "Right Click", search: [] },
+          "L3-2": { main: "HELD", sub: "L1", detail: "Held for Mouse (L1)", mod: true, search: [] },
+          "R0-0": { main: "F7", detail: "F7", search: [] },
+          "R0-1": { main: "F8", detail: "F8", search: [] },
+          "R0-2": { main: "F9", detail: "F9", search: [] },
+          "R0-3": { main: "F10", detail: "F10", search: [] },
+          "R0-4": { main: "F11", detail: "F11", search: [] },
+          "R1-0": { main: "SCRL ←", detail: "Scroll Left", search: ["scroll", "left"] },
+          "R1-1": { main: "SCRL ↓", detail: "Scroll Down", search: ["scroll", "down"] },
+          "R1-2": { main: "SCRL ↑", detail: "Scroll Up", search: ["scroll", "up"] },
+          "R1-3": { main: "SCRL →", detail: "Scroll Right", search: ["scroll", "right"] },
+          "R1-4": { main: "MB5", sub: "Fwd", detail: "Mouse Button 5 (Forward)", search: [] },
+          "R1-5": { main: "F12", detail: "F12", search: [] },
+          "R3-2": { main: "HELD", sub: "L4", detail: "Held with LT1 for Scroll (L4)", mod: true, search: [] }
+        }
+      },
+      {
+        id: 5, name: "5 BT", title: "Bluetooth Profiles", activation: "Hold LT1+LT2 (or LT2+RT3 / RT3+LT2)", triggers: ["L3-2", "L3-3"],
+        keys: {
+          "L0-1": { main: "BT 0", detail: "Bluetooth Profile 0", search: ["bt", "bt0", "bluetooth", "profile"] },
+          "L0-2": { main: "BT 1", detail: "Bluetooth Profile 1", search: ["bt", "bt1", "bluetooth", "profile"] },
+          "L0-3": { main: "BT 2", detail: "Bluetooth Profile 2", search: ["bt", "bt2", "bluetooth", "profile"] },
+          "L0-4": { main: "BT 3", detail: "Bluetooth Profile 3", search: ["bt", "bt3", "bluetooth", "profile"] },
+          "L0-5": { main: "BT 4", detail: "Bluetooth Profile 4", search: ["bt", "bt4", "bluetooth", "profile"] },
+          "L2-3": { main: "BT CLR", detail: "Clear Current Bluetooth Profile", mod: true, search: ["bt_clr", "clear", "bluetooth"] },
+          "L2-4": { main: "CLR ALL", detail: "Clear All Bluetooth Profiles", mod: true, search: ["bt_clr_all", "clear all", "bluetooth"] },
+          "L3-2": { main: "COMBO", detail: "L5 trigger chord (LT1+LT2)", mod: true, search: [] },
+          "L3-3": { main: "COMBO", detail: "L5 trigger chord (LT1+LT2)", mod: true, search: [] }
+        }
+      }
+    ];
+
+    let activeLayerId = 0;
+    let searchQuery = "";
+
+    const tabsEl = document.getElementById("layer-tabs");
+    const gridEl = document.getElementById("keyboard-grid");
+    const activationEl = document.getElementById("activation-text");
+    const searchStatusEl = document.getElementById("search-status");
+    const inspectorEl = document.getElementById("key-inspector");
+    const searchInput = document.getElementById("key-search");
+    const clearBtn = document.getElementById("clear-search");
+
+    function findMatches(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) return [];
+      const matches = [];
+      for (const layer of LAYERS) {
+        for (const [pos, key] of Object.entries(layer.keys)) {
+          const hay = [key.main, key.sub || "", key.detail, ...(key.search || [])].join(" ").toLowerCase();
+          const exact = (key.search || []).some(t => t.toLowerCase() === q);
+          if (exact || (q.length > 1 && hay.includes(q)) || (q.length === 1 && (key.search || []).includes(q))) {
+            matches.push({ layerId: layer.id, pos, key, exact });
+          }
+        }
+      }
+      matches.sort((a, b) => (b.exact ? 1 : 0) - (a.exact ? 1 : 0) || a.layerId - b.layerId);
+      return matches;
+    }
+
+    function renderTabs(matchedLayerIds) {
+      tabsEl.innerHTML = "";
+      LAYERS.forEach(layer => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = layer.name + (matchedLayerIds.has(layer.id) ? " •" : "");
+        btn.className = "tab-btn" +
+          (layer.id === activeLayerId ? " active" : "") +
+          (matchedLayerIds.has(layer.id) ? " has-match" : "");
+        btn.onclick = () => { activeLayerId = layer.id; render(); };
+        tabsEl.appendChild(btn);
+      });
+    }
+
+    function renderHalf(side, layer, matchesOnLayer) {
+      const half = document.createElement("div");
+      half.className = "half";
+      for (let r = 0; r < 4; r++) {
+        const row = document.createElement("div");
+        row.className = "krow";
+        for (let c = 0; c < 6; c++) {
+          const empty =
+            (r === 0 && ((side === "L" && c === 0) || (side === "R" && c === 5))) ||
+            (r === 3 && ((side === "L" && c < 2) || (side === "R" && c > 3)));
+          if (empty) {
+            const sp = document.createElement("div");
+            sp.className = "spacer";
+            row.appendChild(sp);
+            continue;
+          }
+          const pos = `${side}${r}-${c}`;
+          const k = layer.keys[pos];
+          const isTrig = layer.triggers.includes(pos);
+          const matchObj = matchesOnLayer.get(pos);
+          const isShiftMatch = Boolean(matchObj && k && k.shiftChar && searchQuery.trim() === k.shiftChar);
+
+          const btn = document.createElement("button");
+          btn.type = "button";
+          let cls = "keycap";
+          if (!k || k.trans) cls += " trans";
+          else if (k.mod) cls += " mod";
+          if (isTrig) cls += " trigger";
+          if (isShiftMatch) cls += " shift-match";
+          else if (matchObj) cls += " match";
+          btn.className = cls;
+
+          const mainSpan = document.createElement("span");
+          mainSpan.className = "main";
+          mainSpan.textContent = k ? k.main : "·";
+          btn.appendChild(mainSpan);
+          if (k && k.sub) {
+            const subSpan = document.createElement("span");
+            subSpan.className = "sub";
+            subSpan.textContent = k.sub;
+            btn.appendChild(subSpan);
+          }
+
+          const info = k
+            ? `[${layer.name}] ${k.detail}`
+            : `[${layer.name}] Transparent (inherits lower active layer)`;
+          btn.onmouseenter = () => { inspectorEl.textContent = info; };
+          btn.onclick = () => {
+            if (k && typeof k.holdLayer === "number") {
+              activeLayerId = k.holdLayer;
+              render();
+            } else {
+              inspectorEl.textContent = info;
+            }
+          };
+          row.appendChild(btn);
+        }
+        half.appendChild(row);
+      }
+      return half;
+    }
+
+    function render() {
+      const layer = LAYERS[activeLayerId];
+      const matches = findMatches(searchQuery);
+      const matchedLayerIds = new Set(matches.map(m => m.layerId));
+      const matchesOnLayer = new Map(matches.filter(m => m.layerId === activeLayerId).map(m => [m.pos, m]));
+
+      renderTabs(matchedLayerIds);
+      activationEl.innerHTML = `<strong>${layer.title}:</strong> ${layer.activation}`;
+
+      if (searchQuery.trim()) {
+        clearBtn.style.display = "inline-block";
+        if (matches.length === 0) {
+          searchStatusEl.textContent = "No matching key found";
+        } else {
+          const hasShift = matches.some(m => m.key.shiftChar && searchQuery.trim() === m.key.shiftChar);
+          searchStatusEl.textContent = `${matches.length} match${matches.length > 1 ? "es" : ""}${hasShift ? " (also hold Shift / RT2)" : ""}`;
+        }
+      } else {
+        clearBtn.style.display = "none";
+        searchStatusEl.textContent = "Tip: Click any layer key (like RET / Hold L2) to jump to that layer";
+      }
+
+      gridEl.innerHTML = "";
+      gridEl.appendChild(renderHalf("L", layer, matchesOnLayer));
+      gridEl.appendChild(renderHalf("R", layer, matchesOnLayer));
+    }
+
+    searchInput.addEventListener("input", e => {
+      searchQuery = e.target.value;
+      const matches = findMatches(searchQuery);
+      if (matches.length > 0 && !matches.some(m => m.layerId === activeLayerId)) {
+        activeLayerId = matches[0].layerId;
+      }
+      if (matches.length > 0) {
+        const f = matches[0];
+        inspectorEl.textContent = `[${LAYERS[f.layerId].name}] ${f.key.detail}`;
+      }
+      render();
+    });
+
+    clearBtn.addEventListener("click", () => {
+      searchQuery = "";
+      searchInput.value = "";
+      inspectorEl.textContent = "Hover or click any key to inspect tap, hold, and shifted output.";
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>

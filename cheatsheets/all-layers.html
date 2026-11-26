@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mustang ZMK — All 6 Layers Desk Cheatsheet</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-alt: #f1f5f9;
+      --border: #cbd5e1;
+      --border-subtle: #e2e8f0;
+      --text: #0f172a;
+      --muted: #475569;
+      --primary: #2563eb;
+      --primary-text: #ffffff;
+      --trigger: #d97706;
+      --trigger-bg: rgba(217, 119, 6, 0.16);
+      --mod-bg: #e2e8f0;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b1120;
+        --surface: #111827;
+        --surface-alt: #1e293b;
+        --border: #334155;
+        --border-subtle: #1f2937;
+        --text: #f1f5f9;
+        --muted: #94a3b8;
+        --primary: #3b82f6;
+        --primary-text: #ffffff;
+        --trigger: #f59e0b;
+        --trigger-bg: rgba(245, 158, 11, 0.22);
+        --mod-bg: #1e293b;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.4;
+      padding: 24px;
+    }
+    .container { max-width: 1280px; margin: 0 auto; }
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 16px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-title h1 { margin: 0; font-size: 20px; font-weight: 700; }
+    .nav-title p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .nav-link, .print-btn {
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .nav-link.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--primary-text);
+    }
+    .print-btn { background: var(--surface-alt); font-weight: 600; }
+    .legend-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .layers-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 960px) {
+      .layers-grid { grid-template-columns: 1fr; }
+    }
+    .layer-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+    }
+    .layer-head {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .layer-head h2 { margin: 0; font-size: 14px; font-weight: 700; }
+    .layer-head span { font-size: 12px; color: var(--muted); }
+    .halves { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .half { display: flex; flex-direction: column; gap: 4px; }
+    .krow { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+    .sp { height: 34px; }
+    .k {
+      height: 34px;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 0 2px;
+      line-height: 1.05;
+    }
+    .k.mod { background: var(--mod-bg); }
+    .k.trig {
+      border-color: var(--trigger);
+      background: var(--trigger-bg);
+      box-shadow: 0 0 0 1px var(--trigger);
+    }
+    .k.trans {
+      border-style: dashed;
+      background: transparent;
+      color: var(--muted);
+      opacity: 0.45;
+      font-weight: 400;
+    }
+    @media print {
+      @page { size: landscape; margin: 0.3in; }
+      body { background: #fff; color: #111827; padding: 0; }
+      .no-print { display: none !important; }
+      .layers-grid { gap: 10px; }
+      .layer-card { border-color: #cbd5e1; background: #fff; padding: 10px; break-inside: avoid; }
+      .k { border-color: #cbd5e1; background: #f8fafc; color: #0f172a; height: 28px; font-size: 10px; }
+      .sp { height: 28px; }
+      .k.mod { background: #e2e8f0; }
+      .k.trig { border-color: #d97706; background: #fef3c7; color: #78350f; }
+      .k.trans { color: #94a3b8; background: transparent; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="nav no-print">
+      <div class="nav-title">
+        <h1>Mustang ZMK — All 6 Layers Desk Sheet</h1>
+        <p>One-page printable overview of every layer in <code>config/mustang.keymap</code></p>
+      </div>
+      <div class="nav-links">
+        <a class="nav-link" href="index.html">Interactive Explorer</a>
+        <a class="nav-link active" href="all-layers.html">All 6 Layers</a>
+        <a class="nav-link" href="quick-lookup.html">Symbol &amp; Task Finder</a>
+        <a class="nav-link" href="thumbs-and-drills.html">Thumbs &amp; Drills</a>
+        <button class="print-btn" type="button" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </nav>
+
+    <div class="legend-bar">
+      <div><strong>Mustang 42-Key Reference</strong> — Tap/Hold keys shown as <code>TAP·HOLD</code></div>
+      <div>Amber = Held thumb trigger &nbsp;|&nbsp; Shaded = Mod / Layer key &nbsp;|&nbsp; Dashed = Transparent</div>
+    </div>
+
+    <div id="layers-grid" class="layers-grid"></div>
+  </div>
+
+  <script>
+    const LAYERS = [
+      {
+        name: "Layer 0 — Base (Default)", trigger: "Always active", triggers: [],
+        keys: {
+          "L0-1":{l:"Q"},"L0-2":{l:"W"},"L0-3":{l:"E"},"L0-4":{l:"R"},"L0-5":{l:"T"},
+          "L1-0":{l:"TAB",m:1},"L1-1":{l:"A"},"L1-2":{l:"S"},"L1-3":{l:"D"},"L1-4":{l:"F"},"L1-5":{l:"G"},
+          "L2-0":{l:"DEL",m:1},"L2-1":{l:"Z"},"L2-2":{l:"X"},"L2-3":{l:"C"},"L2-4":{l:"V"},"L2-5":{l:"B"},
+          "L3-2":{l:"L1 Mse",m:1},"L3-3":{l:"RET·L2",m:1},"L3-4":{l:"ESC·CTL",m:1},"L3-5":{l:"ALT",m:1},
+          "R0-0":{l:"Y"},"R0-1":{l:"U"},"R0-2":{l:"I"},"R0-3":{l:"O"},"R0-4":{l:"P"},
+          "R1-0":{l:"H"},"R1-1":{l:"J"},"R1-2":{l:"K"},"R1-3":{l:"L"},"R1-4":{l:"; :"},"R1-5":{l:"' \""},
+          "R2-0":{l:"N"},"R2-1":{l:"M"},"R2-2":{l:", <"},"R2-3":{l:". >"},"R2-4":{l:"/ ?"},"R2-5":{l:"\\ |"},
+          "R3-0":{l:"RET·GUI",m:1},"R3-1":{l:"SPC·SFT",m:1},"R3-2":{l:"SPC·L3",m:1},"R3-3":{l:"BSPC",m:1}
+        }
+      },
+      {
+        name: "Layer 1 — Mouse & F-Keys", trigger: "Hold LT1 (L1 Mse)", triggers: ["L3-2"],
+        keys: {
+          "L0-1":{l:"F2"},"L0-2":{l:"F3"},"L0-3":{l:"F4"},"L0-4":{l:"F5"},"L0-5":{l:"F6"},
+          "L1-0":{l:"F1"},"L1-1":{l:"MB4"},"L1-2":{t:1},"L1-3":{l:"MCLK"},"L1-4":{l:"LCLK"},"L1-5":{l:"RCLK"},
+          "L3-2":{l:"HELD",tr:1},"L3-3":{l:"→ L5 BT",m:1},
+          "R0-0":{l:"F7"},"R0-1":{l:"F8"},"R0-2":{l:"F9"},"R0-3":{l:"F10"},"R0-4":{l:"F11"},
+          "R1-0":{l:"M ←"},"R1-1":{l:"M ↓"},"R1-2":{l:"M ↑"},"R1-3":{l:"M →"},"R1-4":{l:"MB5"},"R1-5":{l:"F12"},
+          "R3-2":{l:"→ L4 Scr",m:1}
+        }
+      },
+      {
+        name: "Layer 2 — Special (Numbers & Symbols)", trigger: "Hold LT2 (RET·L2)", triggers: ["L3-3"],
+        keys: {
+          "L0-1":{l:"1"},"L0-2":{l:"2"},"L0-3":{l:"3"},"L0-4":{l:"4"},"L0-5":{l:"5"},
+          "L1-0":{l:"HOME",m:1},"L1-1":{l:"&"},"L1-2":{l:"*"},"L1-3":{l:"#"},"L1-4":{l:"$"},"L1-5":{l:"("},
+          "L2-0":{l:"PG_UP",m:1},"L2-1":{l:"!"},"L2-2":{l:"@"},"L2-3":{l:"^"},"L2-4":{l:"~"},"L2-5":{l:"[ {"},
+          "L3-2":{l:"→ L5 BT",m:1},"L3-3":{l:"HELD",tr:1},
+          "R0-0":{l:"6"},"R0-1":{l:"7"},"R0-2":{l:"8"},"R0-3":{l:"9"},"R0-4":{l:"0"},
+          "R1-0":{l:")"},"R1-1":{l:"-"},"R1-2":{l:"+"},"R1-3":{l:"PSCRN",m:1},"R1-4":{l:"%"},"R1-5":{l:"END",m:1},
+          "R2-0":{l:"] }"},"R2-1":{l:"_"},"R2-2":{l:"="},"R2-3":{t:1},"R2-4":{l:"`"},"R2-5":{l:"PG_DN",m:1},
+          "R3-2":{l:"→ L5 BT",m:1}
+        }
+      },
+      {
+        name: "Layer 3 — Arrows", trigger: "Hold RT3 (SPC·L3)", triggers: ["R3-2"],
+        keys: {
+          "L3-3":{l:"→ L5 BT",m:1},
+          "R1-0":{l:"←"},"R1-1":{l:"↓"},"R1-2":{l:"↑"},"R1-3":{l:"→"},
+          "R3-2":{l:"HELD",tr:1}
+        }
+      },
+      {
+        name: "Layer 4 — Mouse Scroll", trigger: "Hold LT1 (Mouse) + RT3", triggers: ["L3-2", "R3-2"],
+        keys: {
+          "L0-1":{l:"F2"},"L0-2":{l:"F3"},"L0-3":{l:"F4"},"L0-4":{l:"F5"},"L0-5":{l:"F6"},
+          "L1-0":{l:"F1"},"L1-1":{l:"MB4"},"L1-3":{l:"MCLK"},"L1-4":{l:"LCLK"},"L1-5":{l:"RCLK"},
+          "L3-2":{l:"HELD",tr:1},
+          "R0-0":{l:"F7"},"R0-1":{l:"F8"},"R0-2":{l:"F9"},"R0-3":{l:"F10"},"R0-4":{l:"F11"},
+          "R1-0":{l:"SCRL ←"},"R1-1":{l:"SCRL ↓"},"R1-2":{l:"SCRL ↑"},"R1-3":{l:"SCRL →"},"R1-4":{l:"MB5"},"R1-5":{l:"F12"},
+          "R3-2":{l:"HELD",tr:1}
+        }
+      },
+      {
+        name: "Layer 5 — Bluetooth", trigger: "Hold LT1+LT2 (or LT2+RT3 / RT3+LT2)", triggers: ["L3-2", "L3-3"],
+        keys: {
+          "L0-1":{l:"BT 0"},"L0-2":{l:"BT 1"},"L0-3":{l:"BT 2"},"L0-4":{l:"BT 3"},"L0-5":{l:"BT 4"},
+          "L2-3":{l:"BT CLR",m:1},"L2-4":{l:"CLR ALL",m:1},
+          "L3-2":{l:"COMBO",tr:1},"L3-3":{l:"COMBO",tr:1}
+        }
+      }
+    ];
+
+    function buildHalf(side, layer) {
+      const half = document.createElement("div");
+      half.className = "half";
+      for (let r = 0; r < 4; r++) {
+        const row = document.createElement("div");
+        row.className = "krow";
+        for (let c = 0; c < 6; c++) {
+          const empty =
+            (r === 0 && ((side === "L" && c === 0) || (side === "R" && c === 5))) ||
+            (r === 3 && ((side === "L" && c < 2) || (side === "R" && c > 3)));
+          if (empty) {
+            const sp = document.createElement("div");
+            sp.className = "sp";
+            row.appendChild(sp);
+            continue;
+          }
+          const pos = `${side}${r}-${c}`;
+          const k = layer.keys[pos];
+          const isTrig = layer.triggers.includes(pos);
+          const cell = document.createElement("div");
+          let cls = "k";
+          if (!k || k.t) cls += " trans";
+          else if (isTrig || k.tr) cls += " trig";
+          else if (k.m) cls += " mod";
+          cell.className = cls;
+          cell.textContent = k && !k.t ? k.l : "·";
+          row.appendChild(cell);
+        }
+        half.appendChild(row);
+      }
+      return half;
+    }
+
+    const container = document.getElementById("layers-grid");
+    LAYERS.forEach(layer => {
+      const card = document.createElement("section");
+      card.className = "layer-card";
+      card.innerHTML = `<div class="layer-head"><h2>${layer.name}</h2><span>${layer.trigger}</span></div>`;
+      const halves = document.createElement("div");
+      halves.className = "halves";
+      halves.appendChild(buildHalf("L", layer));
+      halves.appendChild(buildHalf("R", layer));
+      card.appendChild(halves);
+      container.appendChild(card);
+    });
+  </script>
+</body>
+</html>

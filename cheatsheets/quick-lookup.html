@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mustang ZMK — Symbol & Task Quick Lookup</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-alt: #f1f5f9;
+      --border: #cbd5e1;
+      --border-subtle: #e2e8f0;
+      --text: #0f172a;
+      --muted: #475569;
+      --primary: #2563eb;
+      --primary-text: #ffffff;
+      --kbd-bg: #f1f5f9;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b1120;
+        --surface: #111827;
+        --surface-alt: #1e293b;
+        --border: #334155;
+        --border-subtle: #1f2937;
+        --text: #f1f5f9;
+        --muted: #94a3b8;
+        --primary: #3b82f6;
+        --primary-text: #ffffff;
+        --kbd-bg: #1e293b;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+      padding: 24px;
+    }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 16px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-title h1 { margin: 0; font-size: 20px; font-weight: 700; }
+    .nav-title p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .nav-link, .print-btn {
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .nav-link.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--primary-text);
+    }
+    .print-btn { background: var(--surface-alt); font-weight: 600; }
+    .subtitle {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 1024px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 680px) { .grid { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .card h2 {
+      margin: 0 0 6px;
+      font-size: 15px;
+      font-weight: 700;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .mnemonic {
+      font-size: 12px;
+      color: var(--muted);
+      margin: 0 0 10px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    tr + tr td { border-top: 1px solid var(--border-subtle); }
+    td { padding: 6px 4px; vertical-align: top; }
+    td:first-child {
+      width: 34%;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    kbd {
+      display: inline-block;
+      padding: 1px 5px;
+      font-size: 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--kbd-bg);
+    }
+    @media print {
+      @page { size: landscape; margin: 0.35in; }
+      body { background: #fff; color: #111827; padding: 0; }
+      .no-print { display: none !important; }
+      .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+      .card { border-color: #cbd5e1; background: #fff; padding: 11px; break-inside: avoid; }
+      kbd { background: #f1f5f9; border-color: #cbd5e1; color: #0f172a; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="nav no-print">
+      <div class="nav-title">
+        <h1>Mustang ZMK — Symbol &amp; Task Quick Lookup</h1>
+        <p>Grouped by what you want to type, plus layout mnemonics</p>
+      </div>
+      <div class="nav-links">
+        <a class="nav-link" href="index.html">Interactive Explorer</a>
+        <a class="nav-link" href="all-layers.html">All 6 Layers</a>
+        <a class="nav-link active" href="quick-lookup.html">Symbol &amp; Task Finder</a>
+        <a class="nav-link" href="thumbs-and-drills.html">Thumbs &amp; Drills</a>
+        <button class="print-btn" type="button" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </nav>
+
+    <div class="subtitle">
+      <strong>Thumb Legend:</strong>
+      <kbd>LT1</kbd> Left Outer (Mouse) ·
+      <kbd>LT2</kbd> Left Middle (RET / Special) ·
+      <kbd>LT3</kbd> Left Index (ESC / LCtrl) ·
+      <kbd>RT2</kbd> Right Index (SPC / LShift) ·
+      <kbd>RT3</kbd> Right Middle (SPC / Arrows)
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <h2>1. Brackets &amp; Quotes</h2>
+        <p class="mnemonic">Brackets sit symmetrically on the inner columns (<kbd>G</kbd>/<kbd>H</kbd> and <kbd>B</kbd>/<kbd>N</kbd>).</p>
+        <table>
+          <tr><td>( &nbsp; )</td><td>Hold <kbd>LT2</kbd> + <kbd>G</kbd> / <kbd>H</kbd></td></tr>
+          <tr><td>[ &nbsp; ]</td><td>Hold <kbd>LT2</kbd> + <kbd>B</kbd> / <kbd>N</kbd></td></tr>
+          <tr><td>{ &nbsp; }</td><td>Hold <kbd>LT2</kbd> + <kbd>RT2</kbd> (Shift) + <kbd>B</kbd> / <kbd>N</kbd></td></tr>
+          <tr><td>&lt; &nbsp; &gt;</td><td>Hold <kbd>RT2</kbd> (Shift) + <kbd>,</kbd> / <kbd>.</kbd> (Base)</td></tr>
+          <tr><td>' &nbsp; "</td><td>Outer right home (<kbd>'</kbd>) / +<kbd>Shift</kbd> (<kbd>"</kbd>)</td></tr>
+          <tr><td>`</td><td>Hold <kbd>LT2</kbd> + <kbd>/</kbd> (Right bottom pinky)</td></tr>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>2. Numbers &amp; Code Symbols</h2>
+        <p class="mnemonic">Top row on Layer 2 is straight <kbd>1–5</kbd> left, <kbd>6–0</kbd> right.</p>
+        <table>
+          <tr><td>1 2 3 4 5</td><td>Hold <kbd>LT2</kbd> + <kbd>Q</kbd> <kbd>W</kbd> <kbd>E</kbd> <kbd>R</kbd> <kbd>T</kbd></td></tr>
+          <tr><td>6 7 8 9 0</td><td>Hold <kbd>LT2</kbd> + <kbd>Y</kbd> <kbd>U</kbd> <kbd>I</kbd> <kbd>O</kbd> <kbd>P</kbd></td></tr>
+          <tr><td>&amp; * # $</td><td>Hold <kbd>LT2</kbd> + <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> <kbd>F</kbd></td></tr>
+          <tr><td>! @ ^ ~</td><td>Hold <kbd>LT2</kbd> + <kbd>Z</kbd> <kbd>X</kbd> <kbd>C</kbd> <kbd>V</kbd></td></tr>
+          <tr><td>- + %</td><td>Hold <kbd>LT2</kbd> + <kbd>J</kbd> / <kbd>K</kbd> / <kbd>;</kbd></td></tr>
+          <tr><td>_ =</td><td>Hold <kbd>LT2</kbd> + <kbd>M</kbd> / <kbd>,</kbd></td></tr>
+          <tr><td>| : ?</td><td>Hold <kbd>RT2</kbd> (Shift) + <kbd>\</kbd> / <kbd>;</kbd> / <kbd>/</kbd></td></tr>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>3. Navigation &amp; Editing</h2>
+        <p class="mnemonic">Outer pinky columns mirror on Layer 2: <kbd>HOME</kbd>/<kbd>END</kbd> &amp; <kbd>PG_UP</kbd>/<kbd>PG_DN</kbd>.</p>
+        <table>
+          <tr><td>← ↓ ↑ →</td><td>Hold <kbd>RT3</kbd> + <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd></td></tr>
+          <tr><td>HOME / END</td><td>Hold <kbd>LT2</kbd> + <kbd>TAB</kbd> / <kbd>'</kbd> (Outer home)</td></tr>
+          <tr><td>PG_UP / PG_DN</td><td>Hold <kbd>LT2</kbd> + <kbd>DEL</kbd> / <kbd>\</kbd> (Outer bottom)</td></tr>
+          <tr><td>PSCRN</td><td>Hold <kbd>LT2</kbd> + <kbd>L</kbd></td></tr>
+          <tr><td>TAB / DEL</td><td>Left outer Home / Bottom (Base)</td></tr>
+          <tr><td>ESC / BSPC</td><td>Tap <kbd>LT3</kbd> (<kbd>ESC</kbd>) · Tap <kbd>RT4</kbd> (<kbd>BSPC</kbd>)</td></tr>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>4. Mouse &amp; Scroll</h2>
+        <p class="mnemonic">Left hand clicks on home row; right hand moves or scrolls on <kbd>H J K L</kbd>.</p>
+        <table>
+          <tr><td>Move Cursor</td><td>Hold <kbd>LT1</kbd> + <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd></td></tr>
+          <tr><td>Scroll Mode</td><td>Hold <kbd>LT1</kbd> + <kbd>RT3</kbd> + <kbd>H</kbd> <kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd></td></tr>
+          <tr><td>Left Click</td><td>Hold <kbd>LT1</kbd> + <kbd>F</kbd></td></tr>
+          <tr><td>Right Click</td><td>Hold <kbd>LT1</kbd> + <kbd>G</kbd></td></tr>
+          <tr><td>Middle Click</td><td>Hold <kbd>LT1</kbd> + <kbd>D</kbd></td></tr>
+          <tr><td>Back / Forward</td><td>Hold <kbd>LT1</kbd> + <kbd>A</kbd> (MB4) / <kbd>;</kbd> (MB5)</td></tr>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>5. Function Keys (F1–F12)</h2>
+        <p class="mnemonic">All 12 F-keys flow left-to-right across Layer 1 (<kbd>LT1</kbd>).</p>
+        <table>
+          <tr><td>F1</td><td>Hold <kbd>LT1</kbd> + <kbd>TAB</kbd> (Left outer home)</td></tr>
+          <tr><td>F2 – F6</td><td>Hold <kbd>LT1</kbd> + <kbd>Q</kbd> <kbd>W</kbd> <kbd>E</kbd> <kbd>R</kbd> <kbd>T</kbd></td></tr>
+          <tr><td>F7 – F11</td><td>Hold <kbd>LT1</kbd> + <kbd>Y</kbd> <kbd>U</kbd> <kbd>I</kbd> <kbd>O</kbd> <kbd>P</kbd></td></tr>
+          <tr><td>F12</td><td>Hold <kbd>LT1</kbd> + <kbd>'</kbd> (Right outer home)</td></tr>
+        </table>
+      </section>
+
+      <section class="card">
+        <h2>6. Bluetooth Profiles (Layer 5)</h2>
+        <p class="mnemonic">Easiest one-handed chord: hold <kbd>LT1</kbd> + <kbd>LT2</kbd> with left thumb.</p>
+        <table>
+          <tr><td>Open Layer 5</td><td><kbd>LT1</kbd>+<kbd>LT2</kbd> (or <kbd>LT2</kbd>+<kbd>RT3</kbd>, <kbd>RT3</kbd>+<kbd>LT2</kbd>)</td></tr>
+          <tr><td>Profiles 0–4</td><td><kbd>Q</kbd> <kbd>W</kbd> <kbd>E</kbd> <kbd>R</kbd> <kbd>T</kbd></td></tr>
+          <tr><td>Clear Current</td><td><kbd>C</kbd> (<kbd>BT_CLR</kbd>)</td></tr>
+          <tr><td>Clear All</td><td><kbd>V</kbd> (<kbd>BT_CLR_ALL</kbd>)</td></tr>
+        </table>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

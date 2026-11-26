@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mustang ZMK — Thumb Cluster &amp; Practice Drills</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --surface-alt: #f1f5f9;
+      --border: #cbd5e1;
+      --border-subtle: #e2e8f0;
+      --text: #0f172a;
+      --muted: #475569;
+      --primary: #2563eb;
+      --primary-text: #ffffff;
+      --kbd-bg: #f1f5f9;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b1120;
+        --surface: #111827;
+        --surface-alt: #1e293b;
+        --border: #334155;
+        --border-subtle: #1f2937;
+        --text: #f1f5f9;
+        --muted: #94a3b8;
+        --primary: #3b82f6;
+        --primary-text: #ffffff;
+        --kbd-bg: #1e293b;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 24px;
+    }
+    .container { max-width: 1120px; margin: 0 auto; }
+    .nav {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 16px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-title h1 { margin: 0; font-size: 20px; font-weight: 700; }
+    .nav-title p { margin: 2px 0 0; font-size: 12px; color: var(--muted); }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .nav-link, .print-btn {
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+    }
+    .nav-link.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: var(--primary-text);
+    }
+    .print-btn { background: var(--surface-alt); font-weight: 600; }
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    @media (max-width: 860px) { .two-col { grid-template-columns: 1fr; } }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+    }
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 16px;
+      font-weight: 700;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .thumb-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .thumb-col h3 { margin: 0 0 8px; font-size: 13px; color: var(--muted); }
+    .thumb-item {
+      border: 1px solid var(--border-subtle);
+      background: var(--surface-alt);
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .thumb-item strong { display: block; font-size: 13px; }
+    .thumb-item span { font-size: 12px; color: var(--muted); }
+    .tip {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .drill {
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .drill h3 { margin: 0 0 4px; font-size: 14px; }
+    .drill p { margin: 0 0 8px; font-size: 12px; color: var(--muted); }
+    .drill-line {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px;
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: var(--surface-alt);
+      border: 1px solid var(--border-subtle);
+      word-break: break-word;
+    }
+    kbd {
+      display: inline-block;
+      padding: 1px 5px;
+      font-size: 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--kbd-bg);
+    }
+    .sandbox-box {
+      margin-top: 18px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 76px;
+      padding: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      resize: vertical;
+    }
+    @media print {
+      @page { size: landscape; margin: 0.35in; }
+      body { background: #fff; color: #111827; padding: 0; }
+      .no-print { display: none !important; }
+      .card { border-color: #cbd5e1; background: #fff; }
+      .thumb-item, .drill-line { background: #f8fafc; border-color: #cbd5e1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav class="nav no-print">
+      <div class="nav-title">
+        <h1>Mustang ZMK — Thumb Cluster &amp; Daily Drills</h1>
+        <p>Master the 8 thumb keys and build muscle memory in 2 minutes a day</p>
+      </div>
+      <div class="nav-links">
+        <a class="nav-link" href="index.html">Interactive Explorer</a>
+        <a class="nav-link" href="all-layers.html">All 6 Layers</a>
+        <a class="nav-link" href="quick-lookup.html">Symbol &amp; Task Finder</a>
+        <a class="nav-link active" href="thumbs-and-drills.html">Thumbs &amp; Drills</a>
+        <button class="print-btn" type="button" onclick="window.print()">Print / Save PDF</button>
+      </div>
+    </nav>
+
+    <div class="two-col">
+      <section class="card">
+        <h2>Thumb Cluster Map (Outer → Inner)</h2>
+        <div class="thumb-grid">
+          <div class="thumb-col">
+            <h3>Left Thumb (LT1 → LT4)</h3>
+            <div class="thumb-item">
+              <strong>LT1 (Outer)</strong>
+              <span>Hold → Layer 1 (Mouse &amp; F1–F12)</span>
+            </div>
+            <div class="thumb-item">
+              <strong>LT2 (Middle)</strong>
+              <span>Tap: Enter · Hold → Layer 2 (Special)</span>
+            </div>
+            <div class="thumb-item">
+              <strong>LT3 (Index)</strong>
+              <span>Tap: Esc · Hold → LCtrl</span>
+            </div>
+            <div class="thumb-item">
+              <strong>LT4 (Inner)</strong>
+              <span>Tap/Hold: LAlt</span>
+            </div>
+          </div>
+
+          <div class="thumb-col">
+            <h3>Right Thumb (RT1 → RT4)</h3>
+            <div class="thumb-item">
+              <strong>RT1 (Inner)</strong>
+              <span>Tap: Enter · Hold → LGui (Win/Cmd)</span>
+            </div>
+            <div class="thumb-item">
+              <strong>RT2 (Index)</strong>
+              <span>Tap: Space · Hold → LShift</span>
+            </div>
+            <div class="thumb-item">
+              <strong>RT3 (Middle)</strong>
+              <span>Tap: Space · Hold → Layer 3 (Arrows)</span>
+            </div>
+            <div class="thumb-item">
+              <strong>RT4 (Outer)</strong>
+              <span>Tap/Hold: Backspace</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tip">
+          <strong>Design Highlight:</strong> You have <em>two</em> <kbd>Enter</kbd> keys (<kbd>LT2</kbd> &amp; <kbd>RT1</kbd>) and <em>two</em> <kbd>Space</kbd> keys (<kbd>RT2</kbd> &amp; <kbd>RT3</kbd>). While holding <kbd>RT2</kbd> (Shift) with your right index thumb, tap <kbd>RT3</kbd> for Space, or hit <kbd>LT2</kbd> for Enter!
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>2-Minute Muscle-Memory Drills</h2>
+
+        <div class="drill">
+          <h3>Drill 1 — Symmetric Brackets &amp; Braces</h3>
+          <p>Hold <kbd>LT2</kbd> on <kbd>G H</kbd> and <kbd>B N</kbd>; add <kbd>RT2</kbd> (Shift) for curly braces.</p>
+          <div class="drill-line">() [] {} () [] {} ({[]})</div>
+        </div>
+
+        <div class="drill">
+          <h3>Drill 2 — Coding Operators &amp; Numbers</h3>
+          <p>Stay on <kbd>LT2</kbd>: top row <kbd>1–0</kbd>, home left <kbd>&amp; * # $</kbd>, bottom left <kbd>! @ ^ ~</kbd>, right <kbd>- + _ = `</kbd>.</p>
+          <div class="drill-line">const x_1 = (a != b) &amp;&amp; (c[0] == `ok`); #100% ~$</div>
+        </div>
+
+        <div class="drill">
+          <h3>Drill 3 — Navigation, Arrows &amp; Mouse Scroll</h3>
+          <p>Hold <kbd>RT3</kbd> + <kbd>H J K L</kbd> for arrows; <kbd>LT2</kbd> + outer pinkies for <kbd>HOME/END</kbd> &amp; <kbd>PG_UP/PG_DN</kbd>; <kbd>LT1</kbd> for Mouse (+ <kbd>RT3</kbd> to Scroll).</p>
+          <div class="drill-line">Move ←↓↑→ · Home/End · PgUp/PgDn · Click (F/G) · Scroll</div>
+        </div>
+      </section>
+    </div>
+
+    <section class="card sandbox-box no-print">
+      <h2>Practice Scratchpad</h2>
+      <textarea placeholder="Click here and type the drill lines above to test your thumb holds and layer switches..."></textarea>
+    </section>
+  </div>
+</body>
+</html>
